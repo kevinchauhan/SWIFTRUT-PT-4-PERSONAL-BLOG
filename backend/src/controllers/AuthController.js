@@ -5,9 +5,9 @@ import { generateTokenAndSetCookie } from '../utils/generateToken.js';
 export class AuthController {
     async signup(req, res) {
         try {
-            const { email, password, username } = req.body;
+            const { email, password, name } = req.body;
 
-            if (!email || !password || !username) {
+            if (!email || !password || !name) {
                 return res.status(400).json({ success: false, message: "All fields are required" });
             }
 
@@ -27,11 +27,6 @@ export class AuthController {
                 return res.status(400).json({ success: false, message: "Email already exists" });
             }
 
-            const existingUserByUsername = await User.findOne({ username });
-
-            if (existingUserByUsername) {
-                return res.status(400).json({ success: false, message: "Username already exists" });
-            }
 
             const salt = await bcryptjs.genSalt(10);
             const hashedPassword = await bcryptjs.hash(password, salt);
@@ -42,7 +37,7 @@ export class AuthController {
             const newUser = new User({
                 email,
                 password: hashedPassword,
-                username,
+                name,
                 image,
             });
 
@@ -73,13 +68,13 @@ export class AuthController {
             const user = await User.findOne({ email });
 
             if (!user) {
-                return res.status(404).json({ success: false, message: "Invalid credentials" });
+                return res.status(401).json({ success: false, message: "Invalid credentials" });
             }
 
             const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 
             if (!isPasswordCorrect) {
-                return res.status(400).json({ success: false, message: "Invalid credentials" });
+                return res.status(401).json({ success: false, message: "Invalid credentials" });
             }
 
             await generateTokenAndSetCookie(user._id, res);
@@ -99,7 +94,7 @@ export class AuthController {
 
     async logout(req, res) {
         try {
-            res.clearCookie("jwt-netflix");
+            res.clearCookie("jwt-token");
             res.status(200).json({ success: true, message: "Logged out successfully" });
         } catch (error) {
             console.log("Error in logout controller", error.message);
