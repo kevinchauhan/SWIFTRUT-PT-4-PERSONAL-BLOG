@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import blogdata from './dummy-data.json'
 
 const HomePage = () => {
-    const [posts, setPosts] = useState(blogdata);
+    const [posts, setPosts] = useState([]);
 
     // Fetch all posts from the backend
     useEffect(() => {
