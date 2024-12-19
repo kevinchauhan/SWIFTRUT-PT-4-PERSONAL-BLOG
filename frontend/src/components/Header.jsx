@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
@@ -6,7 +5,7 @@ const Header = () => {
         <header className="bg-gray-800 text-white p-4">
             <div className="container mx-auto flex justify-between items-center">
                 <h1 className="text-lg font-bold">
-                    <Link to="/">My Blog</Link>
+                    <Link to="/">Personal Blog</Link>
                 </h1>
                 <nav>
                     <ul className="flex space-x-4">

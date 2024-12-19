@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 const PostDetailPage = () => {
     const { id } = useParams();
@@ -7,7 +7,7 @@ const PostDetailPage = () => {
 
     useEffect(() => {
         const fetchPost = async () => {
-            const response = await fetch(`/api/posts/${id}`); // API call to fetch the post by ID
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/api/posts/${id}`);
             const data = await response.json();
             setPost(data);
         };
@@ -41,12 +41,12 @@ const PostDetailPage = () => {
             </div>
 
             <div>
-                <a
-                    href="/"
+                <Link
+                    to="/"
                     className="text-indigo-600 hover:underline mt-6 block"
                 >
                     Back to All Posts
-                </a>
+                </Link>
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import blogdata from './dummy-data.json'
 
@@ -8,7 +8,7 @@ const HomePage = () => {
     // Fetch all posts from the backend
     useEffect(() => {
         const fetchPosts = async () => {
-            const response = await fetch('/api/posts'); // Replace with your backend API route
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/api/posts`);
             const data = await response.json();
             setPosts(data);
         };
@@ -18,7 +18,7 @@ const HomePage = () => {
     const handleDelete = async (id) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this post?');
         if (confirmDelete) {
-            await fetch(`/api/posts/${id}`, { method: 'DELETE' }); // Backend route for deletion
+            await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/api/posts/${id}`, { method: 'DELETE' }); // Backend route for deletion
             setPosts(posts.filter((post) => post._id !== id)); // Update the list locally
         }
     };
