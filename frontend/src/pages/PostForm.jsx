@@ -1,42 +1,50 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const PostFormPage = () => {
-    const { id } = useParams(); // Retrieve post ID from the route, if any
+    const { id } = useParams();
     const navigate = useNavigate();
+
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [author, setAuthor] = useState('');
+    const [tags, setTags] = useState('');
+    const [coverImage, setCoverImage] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
-    // Fetch post details if editing
     useEffect(() => {
         if (id) {
             setIsEditing(true);
-            // Simulate fetching post details (replace with actual API call)
             const fetchPost = async () => {
-                const response = await fetch(`/api/posts/${id}`); // Replace with your backend API route
+                const response = await fetch(`/api/posts/${id}`);
                 const post = await response.json();
                 setTitle(post.title);
                 setContent(post.content);
+                setAuthor(post.author);
+                setTags(post.tags.join(', '));
+                setCoverImage(post.coverImage);
             };
             fetchPost();
         }
     }, [id]);
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const postData = { title, content };
+        const postData = {
+            title,
+            content,
+            author,
+            tags: tags.split(',').map((tag) => tag.trim()),
+            coverImage,
+        };
 
         if (isEditing) {
-            // Update existing post
             await fetch(`/api/posts/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(postData),
             });
         } else {
-            // Create new post
             await fetch('/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -44,7 +52,7 @@ const PostFormPage = () => {
             });
         }
 
-        navigate('/'); // Redirect to the home page
+        navigate('/');
     };
 
     return (
@@ -62,8 +70,44 @@ const PostFormPage = () => {
                         id="title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full py-1 px-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        className="px-2 py-1 w-full border-gray-300 rounded-md shadow-sm"
                         required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="author" className="block text-sm font-medium text-gray-700">
+                        Author
+                    </label>
+                    <input
+                        type="text"
+                        id="author"
+                        value={author}
+                        onChange={(e) => setAuthor(e.target.value)}
+                        className="px-2 py-1 w-full border-gray-300 rounded-md shadow-sm"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+                        Tags (comma-separated)
+                    </label>
+                    <input
+                        type="text"
+                        id="tags"
+                        value={tags}
+                        onChange={(e) => setTags(e.target.value)}
+                        className="px-2 py-1 w-full border-gray-300 rounded-md shadow-sm"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700">
+                        Cover Image URL
+                    </label>
+                    <input
+                        type="text"
+                        id="coverImage"
+                        value={coverImage}
+                        onChange={(e) => setCoverImage(e.target.value)}
+                        className="px-2 py-1 w-full border-gray-300 rounded-md shadow-sm"
                     />
                 </div>
                 <div>
@@ -74,21 +118,19 @@ const PostFormPage = () => {
                         id="content"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        rows="8"
-                        className="w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        rows="6"
+                        className="px-2 py-1 w-full border-gray-300 rounded-md shadow-sm"
                         required
                     />
                 </div>
-                <div className='text-end'>
-                    <button
-                        type="submit"
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                    >
-                        {isEditing ? 'Update Post' : 'Create Post'}
-                    </button>
-                </div>
+                <button
+                    type="submit"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                >
+                    {isEditing ? 'Update Post' : 'Create Post'}
+                </button>
             </form>
-        </div >
+        </div>
     );
 };
 
