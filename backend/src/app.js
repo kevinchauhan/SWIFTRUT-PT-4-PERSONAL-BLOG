@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import posts from './routes/posts.js';
 import db from './config/db.js';
+import { Config } from './config/index.js';
 
 const app = express();
 const corsOptions = {
